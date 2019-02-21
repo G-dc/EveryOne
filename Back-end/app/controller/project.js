@@ -14,6 +14,8 @@ class ProjectController extends Controller {
 
     const addProjectInfo = ctx.request.body;
 
+    addProjectInfo.uId = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]).userId;
+
     const addProjectResult = await ctx.service.project.addOne(addProjectInfo);
 
     if (addProjectResult.addOneResult.affectedRows === 1) {
@@ -34,7 +36,9 @@ class ProjectController extends Controller {
     let getProjectListResult = {};
 
     const ctx = this.ctx;
-    const getListResult = await ctx.service.project.getList(ctx.query);
+    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+    const userId = user_cookie.userId;
+    const getListResult = await ctx.service.project.getList(userId, ctx.query);
 
     if (getListResult.getListResult.length > 0) {
       const _returnArr = await this.checkReturnData(getListResult.getListResult);
@@ -63,7 +67,11 @@ class ProjectController extends Controller {
 
     const ctx = this.ctx;
 
-    const userId = ctx.query.userId;
+    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+
+    const userId = user_cookie.userId;
+
+    // const userId = ctx.query.userId;
 
     if (ctx.query.year && ctx.query.month) {
       const startTime = Date.parse(ctx.query.year + ', ' + ctx.query.month + ', 1');
@@ -167,6 +175,10 @@ class ProjectController extends Controller {
 
     const projectId = _info.prjId;
 
+    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+
+    const userId = user_cookie.userId;
+
     const updateInfo = {};
     updateInfo.projectTitle = _info.prjName;
     updateInfo.projectDesc = _info.prjDetail;
@@ -177,7 +189,7 @@ class ProjectController extends Controller {
     updateInfo.projectStartTime = _info.prjStartTime;
     updateInfo.projectEndTime = _info.prjEndTime;
 
-    const updateResult = await ctx.service.project.updateProjectInfo(updateInfo, projectId);
+    const updateResult = await ctx.service.project.updateProjectInfo(updateInfo, projectId, userId);
 
     if (updateResult.updateProjectInfoResult.affectedRows === 1) {
       updateProjectResult = {
@@ -238,25 +250,15 @@ class ProjectController extends Controller {
 
   // 对传入的obj进行数据重新封装 - 2
   reBuildData(obj) {
-    // const _this = this;
     const _returnArr = [];
 
     obj.forEach(async item => {
       item.projectStartTime = await this.ctx.helper.formatDate(item.projectStartTime);
       item.projectEndTime = await this.ctx.helper.formatDate(item.projectEndTime);
-      // item.projectStartTime = await _this.formatDate(item.projectStartTime);
-      // item.projectEndTime = await _this.formatDate(item.projectEndTime);
     });
 
     return _returnArr;
   }
-
-  // 对传入的时间戳进行格式化处理
-  // async formatDate(date) {
-  //   const _date = new Date(date);
-  //   return _date.getFullYear() + '-' + (_date.getMonth() + 1) + '-' + _date.getDate();
-  // }
-
 }
 
 module.exports = ProjectController;

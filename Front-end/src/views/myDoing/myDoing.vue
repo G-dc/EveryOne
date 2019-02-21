@@ -200,7 +200,7 @@
 
 <script>
 import api from '@/api/index'
-import * as publicFunction from '../../../static/js/public'
+// import * as publicFunction from '../../../static/js/public'
 
 const isNum = /^(0|1|([1-9]\d{0,1})|100)$/ // 校验0 - 100 的整数
 
@@ -239,7 +239,7 @@ export default {
       currentTime: new Date(), // 页面当前时间戳
 
       addNewPrjTemp: {
-        uId: '',
+        // uId: '',
         prjName: '',
         prjDetail: '',
         prjType: '',
@@ -342,7 +342,7 @@ export default {
           }
 
           this.addNewPrjTemp.prjCurrentProcess = this.addNewPrjTemp.prjCurrentProcess ? this.addNewPrjTemp.prjCurrentProcess : '0'
-          this.addNewPrjTemp.uId = JSON.parse(publicFunction.getCookieVal('user')).userId
+          // this.addNewPrjTemp.uId = JSON.parse(publicFunction.getCookieVal('user')).userId
 
           api.project.addNewOne(this.addNewPrjTemp).then(res => {
             if (res.code === 200) {

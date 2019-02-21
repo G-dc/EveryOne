@@ -18,10 +18,11 @@ class ProjectService extends Service {
     return { addOneResult };
   }
 
-  async updateProjectInfo(updateInfo, prjId) {
+  async updateProjectInfo(updateInfo, prjId, uId) {
     const options = {
       where: {
         projectId: prjId,
+        userId: uId,
       },
     };
 
@@ -30,8 +31,8 @@ class ProjectService extends Service {
     return { updateProjectInfoResult };
   }
 
-  async getList(obj) {
-    const sql = `select * from project where projectStartTime >= ${obj.prjStartTime} and projectEndTime <= ${obj.prjEndTime}`;
+  async getList(id, obj) {
+    const sql = `select * from project where userId = '${id}' and projectStartTime >= ${obj.prjStartTime} and projectEndTime <= ${obj.prjEndTime}`;
     const getListResult = await this.app.mysql.query(sql);
 
     return { getListResult };
