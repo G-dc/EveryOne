@@ -1,7 +1,7 @@
 <template>
   <div id="myDone">
     <div>
-      <el-button class="btn" v-if="!showAllProject">返回</el-button>
+      <el-button class="btn" v-if="!showAllProject" @click.native="back">返回</el-button>
       <p class="showTime">当前时间：{{currentTime | formatTime}}</p>
     </div>
 
@@ -178,6 +178,12 @@ export default {
     checkDetail (e) {
       this.previewPrjTemp = e
       this.showPrjPreviewDialog = true
+    },
+
+    back () {
+      this.$router.replace({
+        path: '/myDone'
+      })
     }
   },
   filters: {
