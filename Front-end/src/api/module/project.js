@@ -35,3 +35,8 @@ export function getAllProject (params) {
     params: params
   })
 }
+
+// 获取当天之前所有未完成待办事项
+export function getAllUnFinishProject () {
+  return ajx.get('/getAllUnFinishProject')
+}

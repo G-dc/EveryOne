@@ -113,7 +113,6 @@ export default {
   methods: {
     getAllProject () {
       this.getAllProjectTemp = {}
-      // this.getAllProjectTemp.userId = JSON.parse(publicFunction.getCookieVal('user')).userId
       api.project.getAllProject(this.getAllProjectTemp).then(res => {
         if (res.data.length > 0) {
           this.checkData(res.data, this.currentTime.getFullYear())
@@ -124,7 +123,6 @@ export default {
     getSomeProject (obj) {
       this.getAllProjectTemp = {}
 
-      // this.getAllProjectTemp.userId = JSON.parse(publicFunction.getCookieVal('user')).userId
       this.getAllProjectTemp.year = obj.year
       this.getAllProjectTemp.month = obj.month
 

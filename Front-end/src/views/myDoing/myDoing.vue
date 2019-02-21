@@ -42,7 +42,19 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="任务名称" prop="prjName">
+        <el-form-item v-if="addNewPrjTemp.prjType === 'old'" prop="prjName">
+          <span slot="label">任务名称</span>
+          <el-select v-model="addNewPrjTemp.prjName" placeholder="请选择一项之前未完成的事项" style="width: 100%" @change="selectOneUnFinish()">
+            <el-option
+              v-for="item in unFinishList"
+              :key="item.prjId"
+              :label="item.prjName"
+              :value="item.prjName">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="任务名称" prop="prjName" v-else>
           <el-input
             v-model="addNewPrjTemp.prjName"
             placeholder="请输入待办任务名称"
@@ -59,15 +71,8 @@
         </el-form-item>
 
         <el-form-item prop="prjCurrentProcess">
-          <span slot="label">当前任务进度</span><span v-if="addNewPrjTemp.prjType === 'old' && showprjCurrentProcess" class="labelAfterTip" @click="editProcess('prjCurrentProcess')">更新进度</span>
-          <el-input
-            v-if="!showprjCurrentProcess"
-            v-model="addNewPrjTemp.prjCurrentProcess"
-            placeholder="请输入当前进度"
-            :disabled="addNewPrjTemp.prjType === 'new' || (addNewPrjTemp.prjType !== 'new' && addNewPrjTemp.prjType !== 'old')"
-            @blur="showProcess('prjCurrentProcess')"></el-input>
+          <span slot="label">当前任务进度</span>
           <el-progress
-            v-else
             :stroke-width="10"
             :percentage=prjCurrentProcessVal
             color="#1e2e4c">
@@ -75,15 +80,8 @@
         </el-form-item>
 
         <el-form-item prop="planToFinish">
-          <span slot="label">计划完成进度</span><span v-if="addNewPrjTemp.prjType && showPlanToFinish" class="labelAfterTip" @click="editProcess('planToFinish')">更新进度</span>
-          <el-input
-            v-if="!showPlanToFinish"
-            v-model="addNewPrjTemp.planToFinish"
-            placeholder="请输入计划完成进度"
-            :disabled="addNewPrjTemp.prjType !== 'new' && addNewPrjTemp.prjType !== 'old'"
-            @blur="showProcess('planToFinish')"></el-input>
+          <span slot="label">计划完成进度</span>
           <el-progress
-            v-else
             :stroke-width="10"
             :percentage=planToFinishVal
             color="#1e2e4c">
@@ -125,11 +123,11 @@
         </el-form-item>
 
         <el-form-item label="任务详情" prop="prjDetail">
-          <el-input type="textarea" :disabled="updatePrjTemp.prjStatus === 2" v-model="updatePrjTemp.prjDetail"></el-input>
+          <el-input type="textarea" v-model="updatePrjTemp.prjDetail"></el-input>
         </el-form-item>
 
         <el-form-item prop="prjCurrentProcess">
-          <span slot="label">当前任务进度</span><span v-if="showUpdateprjCurrentProcess" class="labelAfterTip" @click="editProcess('prjCurrentProcess')">更新进度</span>
+          <span slot="label">当前任务进度</span><span v-if="showUpdateprjCurrentProcess" class="labelAfterTip" @click="editProcess()">更新进度</span>
           <el-progress
             v-if="showUpdateprjCurrentProcess"
             :stroke-width="10"
@@ -139,7 +137,8 @@
             v-else
             v-model="updatePrjTemp.prjCurrentProcess"
             placeholder="请输入当前完成进度"
-            @blur="showProcess('prjCurrentProcess')"></el-input>
+            @blur="showProcess()">
+          </el-input>
         </el-form-item>
 
         <el-form-item>
@@ -147,12 +146,13 @@
           <el-progress
             :stroke-width="10"
             :percentage=planToFinishVal
-            color="#1e2e4c"></el-progress>
+            color="#1e2e4c">
+          </el-progress>
         </el-form-item>
 
         <el-form-item>
           <span slot="label">任务状态</span>
-          <el-radio-group v-model="updatePrjTemp.prjStatus" :disabled="true">
+          <el-radio-group v-model="updatePrjTemp.prjStatus" disabled>
             <el-radio :label="1">进行中</el-radio>
             <el-radio :label="2">已完成</el-radio>
           </el-radio-group>
@@ -161,7 +161,7 @@
 
       <div slot="footer">
         <el-button @click="showUpdatePrjDialog = !showUpdatePrjDialog">取消</el-button>
-        <el-button @click.native="confirmUpdateOne('updatePrjTemp')" :disabled="!showUpdateprjCurrentProcess && !updatePrjTemp.prjDetail" style="background-color: #1e2e4c; color: #ffffff;">确认</el-button>
+        <el-button @click.native="confirmUpdateOne('updatePrjTemp')" :disabled="!showUpdateprjCurrentProcess || !updatePrjTemp.prjDetail" style="background-color: #1e2e4c; color: #ffffff;">确认</el-button>
       </div>
     </el-dialog>
 
@@ -200,7 +200,6 @@
 
 <script>
 import api from '@/api/index'
-// import * as publicFunction from '../../../static/js/public'
 
 const isNum = /^(0|1|([1-9]\d{0,1})|100)$/ // 校验0 - 100 的整数
 
@@ -228,23 +227,20 @@ export default {
 
       showprjCurrentProcess: false, // 是否以进度条模式显示当前项目进度（默认为false
 
-      showPlanToFinish: false, // 是否以进度条模式显示计划完成进度（默认为false
-
       showUpdateprjCurrentProcess: true, // 更新窗口是否以进度条模式显示当前项目进度（默认为true
 
       prjCurrentProcessVal: 0, // 以进度条模式显示当前项目进度时的当前值（默认为0
 
-      planToFinishVal: 0, // 以进度条模式显示计划完成进度时的当前值（默认为0
+      planToFinishVal: 100, // 以进度条模式显示计划完成进度时的当前值（默认为100
 
       currentTime: new Date(), // 页面当前时间戳
 
       addNewPrjTemp: {
-        // uId: '',
         prjName: '',
         prjDetail: '',
         prjType: '',
         prjStatus: 1,
-        planToFinish: '',
+        planToFinish: '100',
         prjCurrentProcess: '',
         prjStartTime: null,
         prjEndTime: null
@@ -256,6 +252,9 @@ export default {
 
       // 已建项目列表
       projectList: [],
+
+      // 所有未完成事项列表
+      unFinishList: [],
 
       // 获取当天所有任务项目参数
       getProjectListTemp: {
@@ -269,10 +268,10 @@ export default {
           { required: true, message: '请选择任务类型', trigger: 'change' }
         ],
         prjName: [
-          { required: true, message: '任务名称不能为空', trigger: 'blur' }
+          { required: true, message: '任务名称不能为空' }
         ],
         prjDetail: [
-          { required: true, message: '任务详情不能为空', trigger: 'blur' }
+          { required: true, message: '任务详情不能为空' }
         ],
         prjCurrentProcess: [
           { required: true, validator: validateNum, trigger: 'blur' }
@@ -315,13 +314,22 @@ export default {
       })
     },
 
+    // 获取当天之前所有未完成待办信息
+    getAllUnFinishProjectList () {
+      this.unFinishList = []
+      api.project.getAllUnFinishProject().then(res => {
+        if (res.code === 200) {
+          this.unFinishList.push(...res.data)
+        }
+      })
+    },
+
     // 根据ID获取单一任务
     getProjectOne (e) {
       api.project.getOneProject(e).then(res => {
         if (res.code === 200) {
           this.updatePrjTemp = res.data[0]
 
-          this.planToFinishVal = parseInt(this.updatePrjTemp.planToFinish)
           this.prjCurrentProcessVal = parseInt(this.updatePrjTemp.prjCurrentProcess)
           this.showUpdatePrjDialog = !this.showUpdatePrjDialog
         }
@@ -342,7 +350,6 @@ export default {
           }
 
           this.addNewPrjTemp.prjCurrentProcess = this.addNewPrjTemp.prjCurrentProcess ? this.addNewPrjTemp.prjCurrentProcess : '0'
-          // this.addNewPrjTemp.uId = JSON.parse(publicFunction.getCookieVal('user')).userId
 
           api.project.addNewOne(this.addNewPrjTemp).then(res => {
             if (res.code === 200) {
@@ -413,16 +420,19 @@ export default {
 
     // 关闭新建任务弹窗后(或者切换任务类型)对相关数据进行初始化
     closeAddNewPrjDialog (form, val) {
-      this.planToFinishVal = 0
-      this.prjCurrentProcessVal = 0
-      this.addNewPrjTemp.prjStatus = 1
-      this.showprjCurrentProcess = false
-      this.showPlanToFinish = false
-      this.$refs[form].resetFields()
+      if (val === 'old') {
+        this.prjCurrentProcessVal = 0
+        this.showprjCurrentProcess = true
+      } else {
+        this.prjCurrentProcessVal = 0
+        this.addNewPrjTemp.prjStatus = 1
+        this.showprjCurrentProcess = false
+      }
 
+      this.$refs[form].resetFields()
       /* eslint no-unneeded-ternary: "error" */
       this.addNewPrjTemp.prjType = !this.showAddNewPrjDialog ? '' : val ? val : ''
-      this.addNewPrjTemp.prjCurrentProcess = val && val === 'new' ? '0' : ''
+      this.addNewPrjTemp.prjCurrentProcess = '0'
     },
 
     // 关闭更新任务弹窗后对相关数据进行初始化
@@ -432,18 +442,11 @@ export default {
     },
 
     // 以进度条模式展示
-    showProcess (e) {
+    showProcess () {
       if (this.showAddNewPrjDialog) {
-        if (e === 'planToFinish') {
-          if (isNum.test(this.addNewPrjTemp.planToFinish)) {
-            this.planToFinishVal = parseInt(this.addNewPrjTemp.planToFinish)
-            this.showPlanToFinish = true
-          }
-        } else {
-          if (isNum.test(this.addNewPrjTemp.prjCurrentProcess)) {
-            this.prjCurrentProcessVal = parseInt(this.addNewPrjTemp.prjCurrentProcess)
-            this.showprjCurrentProcess = true
-          }
+        if (isNum.test(this.addNewPrjTemp.prjCurrentProcess)) {
+          this.prjCurrentProcessVal = parseInt(this.addNewPrjTemp.prjCurrentProcess)
+          this.showprjCurrentProcess = true
         }
       }
 
@@ -465,13 +468,9 @@ export default {
     },
 
     // 重新编辑进度条
-    editProcess (e) {
+    editProcess () {
       if (this.showAddNewPrjDialog) {
-        if (e === 'planToFinish') {
-          this.showPlanToFinish = !this.showPlanToFinish
-        } else {
-          this.showprjCurrentProcess = !this.showprjCurrentProcess
-        }
+        this.showprjCurrentProcess = !this.showprjCurrentProcess
       }
 
       if (this.showUpdatePrjDialog) {
@@ -486,6 +485,19 @@ export default {
         this.previewPrjTemp = e
         this.showPrjPreviewDialog = !this.showPrjPreviewDialog
       }
+    },
+
+    selectOneUnFinish () {
+      let e = this.unFinishList.find((item) => {
+        return item.prjName === this.addNewPrjTemp.prjName
+      })
+
+      this.addNewPrjTemp.prjDetail = e.prjDetail
+      this.addNewPrjTemp.prjCurrentProcess = e.prjCurrentProcess
+      this.addNewPrjTemp.planToFinish = e.planToFinish
+      this.addNewPrjTemp.prjStatus = e.prjStatus
+
+      this.prjCurrentProcessVal = parseInt(e.prjCurrentProcess)
     }
   },
   filters: {
@@ -503,6 +515,7 @@ export default {
   },
   created () {
     this.getProjectList()
+    this.getAllUnFinishProjectList()
   },
   mounted () {
     const _this = this
