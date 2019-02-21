@@ -35,4 +35,7 @@ module.exports = app => {
 
   // 获取当天之前的所有待办
   router.get('/getAllProject', controller.project.getAllProject);
+
+  // 获取当天之前未完成的所有待办
+  router.get('/getAllUnFinishProject', controller.project.getAllUnFinishProject);
 };

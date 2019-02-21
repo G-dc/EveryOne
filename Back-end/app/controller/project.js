@@ -71,8 +71,6 @@ class ProjectController extends Controller {
 
     const userId = user_cookie.userId;
 
-    // const userId = ctx.query.userId;
-
     if (ctx.query.year && ctx.query.month) {
       const startTime = Date.parse(ctx.query.year + ', ' + ctx.query.month + ', 1');
 
@@ -134,6 +132,42 @@ class ProjectController extends Controller {
     }
 
     ctx.response.body = getAllProjectResult;
+  }
+
+  /**
+   *  获取今日之前所有未完成事项
+   */
+  async getAllUnFinishProject() {
+    let getAllUnFinishProjectResult = {};
+
+    const ctx = this.ctx;
+
+    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+    const userId = user_cookie.userId;
+
+    // 获取请求此接口时当天日期
+    const currentDate = new Date();
+    const currentTime = Date.parse(currentDate.getFullYear() + ', ' + (currentDate.getMonth() + 1) + ', ' + currentDate.getDate());
+
+    const getAllUnFinishResult = await ctx.service.project.getAllUnFinish(userId, currentTime);
+
+    if (getAllUnFinishResult.getAllUnFinishResult.length > 0) {
+      const _returnArr = await this.checkReturnData(getAllUnFinishResult.getAllUnFinishResult);
+
+      getAllUnFinishProjectResult = {
+        code: 200,
+        msg: '查询成功',
+        data: _returnArr,
+      };
+    } else {
+      getAllUnFinishProjectResult = {
+        code: 400,
+        msg: '查询得到的结果为空',
+        data: [],
+      };
+    }
+
+    ctx.response.body = getAllUnFinishProjectResult;
   }
 
   /**
