@@ -18,7 +18,7 @@ module.exports = appInfo => {
 
   // 允许跨域
   config.cors = {
-    origin: 'http://120.77.47.43:9527',
+    origin: 'http://everyone.guodc.top',
     allowMethods: 'GET, HEAD, PUT, POST, DELETE, PATCH',
     credentials: true,
   };
