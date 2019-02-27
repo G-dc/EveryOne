@@ -9,11 +9,11 @@
           <el-input placeholder="请输入登录用户名" v-model="loginTemp.userName" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input placeholder="请输入登录密码" type="password" v-model="loginTemp.userPassword" clearable></el-input>
+          <el-input placeholder="请输入登录密码" type="password" v-model="loginTemp.userPassword" clearable @keyup.enter.native="login"></el-input>
         </el-form-item>
       </el-form>
 
-      <el-button @click.native="login" style="width: 100%; margin: 0 0 20px; border-radius: 10px; background-color: #1e2e4c; color: white; outline: none; border: none;">{{isLogin ? '登录中' : '登录'}}</el-button>
+      <el-button @click.native="login" style="width: 100%; margin: 0 0 20px; border-radius: 10px; background-color: #1e2e4c; color: white; outline: none; border: none;" :loading="isLogin">{{isLogin ? '登录中' : '登录'}}</el-button>
 
       <el-row :gutter="50">
         <el-col :span="12" style="text-align: right;">
@@ -34,11 +34,11 @@
           <el-input placeholder="请设置登录用户名" v-model="registTemp.userName" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input placeholder="请设置登录密码" type="password" v-model="registTemp.userPassword" clearable></el-input>
+          <el-input placeholder="请设置登录密码" type="password" v-model="registTemp.userPassword" clearable @keyup.enter.native="regist"></el-input>
         </el-form-item>
       </el-form>
 
-      <el-button @click.native="regist" style="width: 100%; margin: 0 0 20px; border-radius: 10px; background-color: #1e2e4c; color: white; outline: none; border: none;">{{isRegist ? '注册中' : '注册'}}</el-button>
+      <el-button @click.native="regist" style="width: 100%; margin: 0 0 20px; border-radius: 10px; background-color: #1e2e4c; color: white; outline: none; border: none;" :loading="isRegist">{{isRegist ? '注册中' : '注册'}}</el-button>
 
       <el-button type="text" style="width: 100%; color: #1e2e4c;" @click.native="loginRightNow()">马上登录</el-button>
     </div>
@@ -74,10 +74,10 @@ export default {
       this.isLogin = true
       api.user.login(this.loginTemp).then(res => {
         if (res.code === 200) {
-          const days = 3
-          const exp = new Date()
-          exp.setTime(exp.getTime() + days * 24 * 3600 * 1000)
-          document.cookie = 'isLogin' + '=' + true + ';expires=' + exp.toGMTString()
+          // const days = 3
+          // const exp = new Date()
+          // exp.setTime(exp.getTime() + days * 24 * 3600 * 1000)
+          // document.cookie = 'isLogin' + '=' + true + ';expires=' + exp.toGMTString()
 
           this.$message({
             message: '登录成功，正在跳转...',

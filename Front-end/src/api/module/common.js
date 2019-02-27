@@ -7,9 +7,5 @@ export function getCSRF () {
 
 // 验证登录状态
 export function checkStatus (data) {
-  return ajx.get('/checkLoginStatus', {
-    params: {
-      user_id: data
-    }
-  })
+  return ajx.get('/checkLoginStatus')
 }

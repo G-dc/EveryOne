@@ -1,6 +1,10 @@
 import axios from 'axios'
 import * as baseUrl from '../../static/js/baseUrl'
+
 import * as publicFunction from '../../static/js/public'
+import router from '../router'
+
+import { Message } from 'element-ui'
 
 const ajx = axios.create({
   timeout: 1000 * 20,
@@ -9,9 +13,9 @@ const ajx = axios.create({
 })
 
 ajx.interceptors.request.use(config => {
-  if (config.method === 'post') {
-    const _key = '_csrf'
-    config.data[_key] = publicFunction.getCookieVal('user_id')
+  if (publicFunction.getCookieVal()) {
+    let token = publicFunction.getCookieVal()
+    config.headers.authorization = `Bearer ${token}`
   }
   return config
 }, error => {
@@ -21,6 +25,19 @@ ajx.interceptors.request.use(config => {
 ajx.interceptors.response.use(response => {
   return response.data ? response.data : response
 }, error => {
+  if (error.response) {
+    switch (error.response.status) {
+      case 401:
+        Message.warning({
+          message: error.response.data.message
+        })
+        setTimeout(() => {
+          router.replace({
+            path: '/login'
+          })
+        }, 1000)
+    }
+  }
   return Promise.reject(error)
 })
 

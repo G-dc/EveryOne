@@ -94,22 +94,28 @@ export default {
             let exp = new Date()
             exp.setTime(exp.getTime() - 1)
 
-            let isLogin = publicFunction.getCookieVal('isLogin')
-            let user = publicFunction.getCookieVal('user')
-            let userId = publicFunction.getCookieVal('user_id')
-            if (isLogin !== null) {
-              document.cookie = 'isLogin=' + isLogin + ';expires=' + exp.toGMTString()
-            }
-            if (user !== null) {
-              document.cookie = 'user=' + user + ';expires=' + exp.toGMTString()
-            }
-            if (userId !== null) {
-              document.cookie = 'user_id=' + userId + ';expires=' + exp.toGMTString()
-            }
+            let token = publicFunction.getCookieVal()
+            document.cookie = 'TOKEN=' + token + ';expires=' + exp.toGMTString()
 
-            this.$router.replace({
-              path: '/Login'
+            // let isLogin = publicFunction.getCookieVal('isLogin')
+            // let user = publicFunction.getCookieVal('user')
+            // if (isLogin !== null) {
+            //   document.cookie = 'isLogin=' + isLogin + ';expires=' + exp.toGMTString()
+            // }
+            // if (user !== null) {
+            //   document.cookie = 'user=' + user + ';expires=' + exp.toGMTString()
+            // }
+
+            this.$message({
+              type: 'success',
+              message: res.msg + ', 即将跳转至登录页'
             })
+
+            setTimeout(() => {
+              this.$router.replace({
+                path: '/Login'
+              })
+            }, 1000)
           }
         })
       }).catch(() => {

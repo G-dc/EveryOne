@@ -6,22 +6,9 @@ module.exports = {
   /**
    * @param {*} str —— 当前cookie内对应的name
    */
-  getCookieVal (str) {
+  getCookieVal () {
     if (document.cookie) {
-      if (document.cookie.indexOf(str) > -1) {
-        if (document.cookie.indexOf(';') > -1) {
-          const _cookie = document.cookie.split(';')
-          const _cookieData = _cookie.find((item) => {
-            return item.indexOf(str) > -1
-          })
-
-          return _cookieData.split('=')[1]
-        } else {
-          return document.cookie.split('=')[1]
-        }
-      } else {
-        return false
-      }
+      return document.cookie.split('=')[1]
     } else {
       return false
     }
