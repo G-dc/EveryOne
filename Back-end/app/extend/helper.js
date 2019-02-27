@@ -21,4 +21,13 @@ module.exports = {
 
     return resultData;
   },
+
+  // 根据传入的参数获取token的相关值
+  getTokenVal() {
+    const token = this.ctx.request.header.authorization.split(' ')[1];
+
+    const decodedToken = this.app.jwt.verify(token, this.app.config.jwt.secret);
+
+    return decodedToken;
+  },
 };

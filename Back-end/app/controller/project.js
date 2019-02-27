@@ -14,7 +14,11 @@ class ProjectController extends Controller {
 
     const addProjectInfo = ctx.request.body;
 
-    addProjectInfo.uId = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]).userId;
+    // addProjectInfo.uId = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]).userId;
+
+    const tokenVal = await ctx.helper.getTokenVal();
+
+    addProjectInfo.uId = tokenVal.userId;
 
     const addProjectResult = await ctx.service.project.addOne(addProjectInfo);
 
@@ -36,8 +40,12 @@ class ProjectController extends Controller {
     let getProjectListResult = {};
 
     const ctx = this.ctx;
-    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
-    const userId = user_cookie.userId;
+
+    const tokenVal = await ctx.helper.getTokenVal();
+
+    const userId = tokenVal.userId;
+    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+    // const userId = user_cookie.userId;
     const getListResult = await ctx.service.project.getList(userId, ctx.query);
 
     if (getListResult.getListResult.length > 0) {
@@ -67,9 +75,13 @@ class ProjectController extends Controller {
 
     const ctx = this.ctx;
 
-    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
 
-    const userId = user_cookie.userId;
+    // const userId = user_cookie.userId;
+
+    const tokenVal = await ctx.helper.getTokenVal();
+
+    const userId = tokenVal.userId;
 
     if (ctx.query.year && ctx.query.month) {
       const startTime = Date.parse(ctx.query.year + ', ' + ctx.query.month + ', 1');
@@ -142,8 +154,14 @@ class ProjectController extends Controller {
 
     const ctx = this.ctx;
 
-    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
-    const userId = user_cookie.userId;
+    // await ctx.helper.getTokenVal();
+
+    const tokenVal = await ctx.helper.getTokenVal();
+
+    const userId = tokenVal.userId;
+
+    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+    // const userId = user_cookie.userId;
 
     // 获取请求此接口时当天日期
     const currentDate = new Date();
@@ -209,9 +227,12 @@ class ProjectController extends Controller {
 
     const projectId = _info.prjId;
 
-    const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
+    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
 
-    const userId = user_cookie.userId;
+    // const userId = user_cookie.userId;
+
+    const tokenVal = await ctx.helper.getTokenVal();
+    const userId = tokenVal.userId;
 
     const updateInfo = {};
     updateInfo.projectTitle = _info.prjName;

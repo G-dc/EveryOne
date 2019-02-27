@@ -70,7 +70,7 @@ class UserController extends Controller {
 
       if (!loginUserInfo.userName || !loginUserInfo.userPassword) {
         userLoginResult = {
-          code: 500,
+          code: 400,
           msg: '用户名与密码为必填项',
           data: null,
         };
@@ -90,23 +90,11 @@ class UserController extends Controller {
               data: [],
             };
 
-            ctx.rotateCsrfSecret();
-
-            ctx.cookies.set('isLogin', undefined, {
-              httpOnly: false,
-              encrypt: false,
-              signed: false,
-              maxAge: 2000,
+            const token = this.app.jwt.sign(JSON.parse(JSON.stringify(findUserResult.findUserResult)), this.app.config.jwt.secret, {
+              expiresIn: '3600s',
             });
 
-            ctx.cookies.set('user', JSON.stringify(findUserResult.findUserResult), {
-              httpOnly: false,
-              encrypt: false,
-              signed: false,
-              maxAge: 3 * 24 * 3600 * 1000, // 有效期三天
-            });
-
-            ctx.cookies.set('user_id', ctx.session.csrfToken, {
+            ctx.cookies.set('TOKEN', token, {
               httpOnly: false,
               encrypt: false,
               signed: false,
@@ -137,8 +125,6 @@ class UserController extends Controller {
    */
   async userLogout() {
     const ctx = this.ctx;
-
-    ctx.session = null;
 
     ctx.response.body = {
       code: 200,
@@ -184,14 +170,16 @@ class UserController extends Controller {
   }
 
   /**
-   * 检查登录状态
+   * 检查登录状态(未使用)
    */
   async userLoginStatus() {
     let userLoginStatusResult = {};
 
     const ctx = this.ctx;
-    const userInfo = ctx.query.user_id;
-    const sessionInfo = ctx.session.csrfToken;
+    // const userInfo = ctx.query.user_id;
+
+    const userInfo = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]).userId;
+    const sessionInfo = ctx.session.user_id;
 
     const checkLoginStatusResult = await ctx.service.user.checkLoginStatus(userInfo, sessionInfo);
 

@@ -10,17 +10,23 @@ module.exports = appInfo => {
 
   config.security = {
     csrf: {
-      useSession: true,
-      cookieName: 'csrfToken',
-      sessionName: 'csrfToken',
+      enable: false,
+      // useSession: true,
+      // cookieName: 'csrfToken',
+      // sessionName: 'csrfToken',
     },
   };
 
   // 允许跨域
   config.cors = {
-    origin: 'http://everyone.guodc.top',
+    // origin: 'http://everyone.guodc.top',
+    origin: 'http://127.0.0.1:8080',
     allowMethods: 'GET, HEAD, PUT, POST, DELETE, PATCH',
     credentials: true,
+  };
+
+  config.jwt = {
+    secret: '123456',
   };
 
   return config;
