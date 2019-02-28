@@ -3,7 +3,7 @@
 
 ## 技术栈解析
 
-* `前端` —— [Front-end](https://github.com/G-dc/EveryOne/tree/master/Front-end)
+* **前端** —— [Front-end](https://github.com/G-dc/EveryOne/tree/master/Front-end)
     * Vue.js
     * Vue-Router
     * Webpack
@@ -11,7 +11,7 @@
     * element-ui
     * stylus
 
-* `后端` —— [Back-end](https://github.com/G-dc/EveryOne/tree/master/Back-end)
+* **后端** —— [Back-end](https://github.com/G-dc/EveryOne/tree/master/Back-end)
     * [Egg.js](https://eggjs.org/zh-cn/)
     * MySQL
     * Nginx
