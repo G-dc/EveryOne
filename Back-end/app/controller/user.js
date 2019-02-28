@@ -91,7 +91,7 @@ class UserController extends Controller {
             };
 
             const token = this.app.jwt.sign(JSON.parse(JSON.stringify(findUserResult.findUserResult)), this.app.config.jwt.secret, {
-              expiresIn: '3600s',
+              expiresIn: '1d',
             });
 
             ctx.cookies.set('TOKEN', token, {

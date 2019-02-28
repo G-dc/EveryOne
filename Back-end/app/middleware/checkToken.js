@@ -13,7 +13,7 @@ module.exports = (options, app) => {
         delete decodedToken.exp;
 
         token = app.jwt.sign(decodedToken, app.config.jwt.secret, {
-          expiresIn: '3600s',
+          expiresIn: '1d',
         });
 
         ctx.cookies.set('TOKEN', token, {
@@ -28,7 +28,7 @@ module.exports = (options, app) => {
         if (error.name === 'TokenExpiredError') {
           ctx.status = 401;
           ctx.body = {
-            message: 'token失效，请重新登录',
+            message: '登录信息已过期，请重新登录',
           };
           return;
         }

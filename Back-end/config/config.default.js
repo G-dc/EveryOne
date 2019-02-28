@@ -19,8 +19,9 @@ module.exports = appInfo => {
 
   // 允许跨域
   config.cors = {
+    origin: ctx => ctx.get('origin'),
     // origin: 'http://everyone.guodc.top',
-    origin: 'http://127.0.0.1:8080',
+    // origin: 'http://127.0.0.1:8080',
     allowMethods: 'GET, HEAD, PUT, POST, DELETE, PATCH',
     credentials: true,
   };

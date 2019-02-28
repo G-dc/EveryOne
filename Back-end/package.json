@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "egg": "^2.2.1",
+    "egg-cluster": "^1.22.2",
     "egg-cors": "^2.1.2",
     "egg-jwt": "^3.1.6",
     "egg-mysql": "^3.0.0",
@@ -26,7 +27,7 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-EveryOne --ignore-stderr",
+    "start": "egg-scripts start --port=7001 --daemon --title=egg-server-EveryOne",
     "stop": "egg-scripts stop --title=egg-server-EveryOne",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
