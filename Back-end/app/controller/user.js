@@ -90,7 +90,7 @@ class UserController extends Controller {
               data: [],
             };
 
-            const token = this.app.jwt.sign(JSON.parse(JSON.stringify(findUserResult.findUserResult)), this.app.config.jwt.secret, {
+            const token = this.app.jwt.sign(Object.assign({}, findUserResult.findUserResult), this.app.config.jwt.secret, {
               expiresIn: '1d',
             });
 

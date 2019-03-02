@@ -9,7 +9,7 @@ module.exports = (options, app) => {
       try {
         const decodedToken = app.jwt.verify(token, app.config.jwt.secret);
 
-        delete decodedToken.iat;
+        // delete decodedToken.iat;
         delete decodedToken.exp;
 
         token = app.jwt.sign(decodedToken, app.config.jwt.secret, {
