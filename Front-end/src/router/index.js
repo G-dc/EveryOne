@@ -3,7 +3,6 @@ import Router from 'vue-router'
 
 import { Message } from 'element-ui'
 
-// import api from '@/api/index'
 import * as publicFunction from '../../static/js/public'
 
 const _import = require(`@/utils/import-${process.env.NODE_ENV}`)
@@ -36,25 +35,8 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   // 获取当前登录状态
-  // const loginStatus = publicFunction.getCookieVal('isLogin')
-  // const userInfo = publicFunction.getCookieVal('userId')
-
   let token = publicFunction.getCookieVal()
 
-  // api.common.checkStatus().then(res => {
-  //   if (res.code === 200) {
-  //     next()
-  //   } else {
-  //     Message({
-  //       message: '当前尚未登录，请先登录',
-  //       type: 'warning',
-  //       duration: 2000
-  //     })
-  //     next({
-  //       path: '/login'
-  //     })
-  //   }
-  // })
   if (to.path !== '/login') {
     if (token) {
       next()

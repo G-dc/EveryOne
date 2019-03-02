@@ -4,11 +4,19 @@
 
 module.exports = {
   /**
-   * @param {*} str —— 当前cookie内对应的name
+   *
    */
   getCookieVal () {
     if (document.cookie) {
-      return document.cookie.split('=')[1]
+      if (document.cookie.indexOf('TOKEN') > -1) {
+        let _cookieArr = document.cookie.split(';')
+        let _token = _cookieArr.find((item) => {
+          return item.indexOf('TOKEN') > -1
+        })
+        return _token.split('=')[1]
+      } else {
+        return false
+      }
     } else {
       return false
     }
