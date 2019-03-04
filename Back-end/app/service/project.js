@@ -53,7 +53,7 @@ class ProjectService extends Service {
   }
 
   async getAllUnFinish(id, time) {
-    const sql = `select * from project where userId = '${id}' and projectStatus = 1 and projectEndTime < ${time} order by projectStartTime desc`;
+    const sql = `select * from project where userId = '${id}' and projectEndTime < ${time} order by projectId desc`;
 
     const getAllUnFinishResult = await this.app.mysql.query(sql);
 

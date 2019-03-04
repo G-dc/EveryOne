@@ -14,8 +14,6 @@ class ProjectController extends Controller {
 
     const addProjectInfo = ctx.request.body;
 
-    // addProjectInfo.uId = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]).userId;
-
     const tokenVal = await ctx.helper.getTokenVal();
 
     addProjectInfo.uId = tokenVal.userId;
@@ -44,12 +42,11 @@ class ProjectController extends Controller {
     const tokenVal = await ctx.helper.getTokenVal();
 
     const userId = tokenVal.userId;
-    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
-    // const userId = user_cookie.userId;
+
     const getListResult = await ctx.service.project.getList(userId, ctx.query);
 
     if (getListResult.getListResult.length > 0) {
-      const _returnArr = await this.checkReturnData(getListResult.getListResult);
+      const _returnArr = await ctx.helper.checkUnFormatDateData(getListResult.getListResult);
 
       getProjectListResult = {
         code: 200,
@@ -74,10 +71,6 @@ class ProjectController extends Controller {
     let getAllProjectResult = {};
 
     const ctx = this.ctx;
-
-    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
-
-    // const userId = user_cookie.userId;
 
     const tokenVal = await ctx.helper.getTokenVal();
 
@@ -104,7 +97,7 @@ class ProjectController extends Controller {
       const getSomeResult = await ctx.service.project.getSome(userId, startTime, endTime);
 
       if (getSomeResult.getSomeResult.length > 0) {
-        const _returnArr = await this.checkReturnData(getSomeResult.getSomeResult);
+        const _returnArr = await ctx.helper.checkUnFormatDateData(getSomeResult.getSomeResult);
 
         getAllProjectResult = {
           code: 200,
@@ -127,7 +120,7 @@ class ProjectController extends Controller {
       const getAllResult = await ctx.service.project.getAll(userId, currentTime);
 
       if (getAllResult.getAllResult.length > 0) {
-        const _returnArr = await this.checkReturnData(getAllResult.getAllResult);
+        const _returnArr = await ctx.helper.checkUnFormatDateData(getAllResult.getAllResult);
 
         getAllProjectResult = {
           code: 200,
@@ -154,14 +147,9 @@ class ProjectController extends Controller {
 
     const ctx = this.ctx;
 
-    // await ctx.helper.getTokenVal();
-
     const tokenVal = await ctx.helper.getTokenVal();
 
     const userId = tokenVal.userId;
-
-    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
-    // const userId = user_cookie.userId;
 
     // 获取请求此接口时当天日期
     const currentDate = new Date();
@@ -169,8 +157,10 @@ class ProjectController extends Controller {
 
     const getAllUnFinishResult = await ctx.service.project.getAllUnFinish(userId, currentTime);
 
-    if (getAllUnFinishResult.getAllUnFinishResult.length > 0) {
-      const _returnArr = await this.checkReturnData(getAllUnFinishResult.getAllUnFinishResult);
+    const _arr = await ctx.helper.checkUnFinishProjectList(getAllUnFinishResult.getAllUnFinishResult);
+
+    if (_arr.length > 0) {
+      const _returnArr = await ctx.helper.checkUnFormatDateData(_arr);
 
       getAllUnFinishProjectResult = {
         code: 200,
@@ -198,7 +188,7 @@ class ProjectController extends Controller {
     const getOneResult = await ctx.service.project.getOne(ctx.query.prjId);
 
     if (getOneResult.getOneResult) {
-      const _returnArr = await this.checkReturnData(getOneResult.getOneResult);
+      const _returnArr = await ctx.helper.checkUnFormatDateData(getOneResult.getOneResult);
 
       getOneProjectResult = {
         code: 200,
@@ -226,10 +216,6 @@ class ProjectController extends Controller {
     const _info = ctx.request.body;
 
     const projectId = _info.prjId;
-
-    // const user_cookie = JSON.parse(ctx.helper.getCookieVal(ctx.request.header.cookie, 'userId').split('=')[1]);
-
-    // const userId = user_cookie.userId;
 
     const tokenVal = await ctx.helper.getTokenVal();
     const userId = tokenVal.userId;
@@ -261,58 +247,6 @@ class ProjectController extends Controller {
     }
 
     ctx.response.body = updateProjectResult;
-  }
-
-  // 对传入的obj进行数据重新封装 - 1
-  async checkReturnData(obj) {
-    const _returnArr = [];
-
-    if (obj.length) {
-      obj.forEach(item => {
-        const _returnOne = {};
-
-        _returnOne.prjId = item.projectId;
-        _returnOne.prjName = item.projectTitle;
-        _returnOne.prjDetail = item.projectDesc;
-        _returnOne.prjType = item.projectType;
-        _returnOne.prjStatus = item.projectStatus;
-        _returnOne.planToFinish = item.projectWillDo;
-        _returnOne.prjCurrentProcess = item.projectHasDone;
-        _returnOne.prjStartTime = item.projectStartTime;
-        _returnOne.prjEndTime = item.projectEndTime;
-
-        _returnArr.push(_returnOne);
-      });
-    } else {
-      const _returnOne = {};
-
-      _returnOne.prjId = obj.projectId;
-      _returnOne.prjName = obj.projectTitle;
-      _returnOne.prjDetail = obj.projectDesc;
-      _returnOne.prjType = obj.projectType;
-      _returnOne.prjStatus = obj.projectStatus;
-      _returnOne.planToFinish = obj.projectWillDo;
-      _returnOne.prjCurrentProcess = obj.projectHasDone;
-      _returnOne.prjStartTime = obj.projectStartTime;
-      _returnOne.prjEndTime = obj.projectEndTime;
-
-      _returnArr.push(_returnOne);
-    }
-
-
-    return _returnArr;
-  }
-
-  // 对传入的obj进行数据重新封装 - 2
-  reBuildData(obj) {
-    const _returnArr = [];
-
-    obj.forEach(async item => {
-      item.projectStartTime = await this.ctx.helper.formatDate(item.projectStartTime);
-      item.projectEndTime = await this.ctx.helper.formatDate(item.projectEndTime);
-    });
-
-    return _returnArr;
   }
 }
 
