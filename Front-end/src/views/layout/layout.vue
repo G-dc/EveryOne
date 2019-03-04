@@ -97,15 +97,6 @@ export default {
             let token = publicFunction.getCookieVal()
             document.cookie = 'TOKEN=' + token + ';expires=' + exp.toGMTString()
 
-            // let isLogin = publicFunction.getCookieVal('isLogin')
-            // let user = publicFunction.getCookieVal('user')
-            // if (isLogin !== null) {
-            //   document.cookie = 'isLogin=' + isLogin + ';expires=' + exp.toGMTString()
-            // }
-            // if (user !== null) {
-            //   document.cookie = 'user=' + user + ';expires=' + exp.toGMTString()
-            // }
-
             this.$message({
               type: 'success',
               message: res.msg + ', 即将跳转至登录页'
