@@ -51,12 +51,7 @@ module.exports = {
     });
 
     // 对去重后保留的数组进行筛选，剔除已完成的内容
-
-    let _returnArr = [];
-
-    _returnArr = _projectList.filter(element => {
-      return element.projectStatus !== 2;
-    });
+    const _returnArr = _projectList.filter(element => element.projectStatus === 1);
 
     return _returnArr;
   },
